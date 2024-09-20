@@ -18,13 +18,13 @@ jobs:
       # Step 2: Set up environment for Red Hat
       - name: Set up Red Hat environment
         run: |
-          sudo dnf update -y
-          sudo dnf install -y gcc make
+          dnf update -y
+          dnf install -y gcc make
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: |
-          sudo dnf install -y <your-dependency>
+          dnf install -y <your-dependency>
 
       # Step 4: Build the project
       - name: Build project
