@@ -1,4 +1,4 @@
-name: Java 8 and Ant CI Pipeline on Red Hat Runner (No Sudo)
+name: Print a Word on Red Hat Runner
 
 on:
   push:
@@ -6,42 +6,20 @@ on:
       - main
 
 jobs:
-  build:
+  print_message:
     runs-on: self-hosted
 
     steps:
-      # Step 1: Checkout the code from the repository
+      # Step 1: Checkout the code (optional if you just want to print)
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Verify Java 8 is already installed
-      - name: Verify Java 8 Installation
+      # Step 2: Print a word or message
+      - name: Print Hello World
         run: |
-          java -version
+          echo "Hello, World!"
 
-      # Step 3: Install Apache Ant (Without sudo)
-      - name: Install Apache Ant
+      # Step 3: Print a custom message
+      - name: Print Custom Message
         run: |
-          # Download Apache Ant (latest stable version)
-          curl -L -o ant.tar.gz https://downloads.apache.org/ant/binaries/apache-ant-1.10.11-bin.tar.gz
-          
-          # Extract Ant into the user's local directory
-          mkdir -p ~/local/ant
-          tar -xzf ant.tar.gz -C ~/local/ant --strip-components=1
-
-          # Set Ant environment variables
-          echo "export ANT_HOME=$HOME/local/ant" >> $BASH_ENV
-          echo "export PATH=$ANT_HOME/bin:$PATH" >> $BASH_ENV
-          source $BASH_ENV
-
-      # Step 4: Build the project using Ant
-      - name: Build with Ant
-        run: |
-          ant clean
-          ant compile
-          ant jar
-
-      # Step 5: Run tests with Ant
-      - name: Run tests with Ant
-        run: |
-          ant test
+          echo "This is a test on my Red Hat self-hosted runner!"
