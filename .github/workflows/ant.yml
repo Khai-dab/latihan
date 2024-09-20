@@ -1,4 +1,4 @@
-name: Red Hat Self-hosted CI Pipeline
+name: Python CI on Red Hat Runner (No Sudo)
 
 on:
   push:
@@ -7,31 +7,33 @@ on:
 
 jobs:
   build:
-    # This tells GitHub Actions to use a self-hosted runner
     runs-on: self-hosted
 
     steps:
-      # Step 1: Check out the code from the repository
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up environment for Red Hat
-      - name: Set up Red Hat environment
+      # Step 2: Set up Python environment (without sudo)
+      - name: Set up Python environment
         run: |
-          dnf update -y
-          dnf install -y gcc make
+          # Create a virtual environment in the project directory
+          python3 -m venv ~/myenv
+          
+          # Activate the virtual environment
+          source ~/myenv/bin/activate
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
+          # Upgrade pip in the virtual environment
+          pip install --upgrade pip
+
+      # Step 3: Install Python dependencies in the virtual environment
+      - name: Install Python dependencies
         run: |
-          dnf install -y <your-dependency>
+          source ~/myenv/bin/activate
+          pip install -r requirements.txt
 
-      # Step 4: Build the project
-      - name: Build project
-        run: |
-          make build
-
-      # Step 5: Run tests
+      # Step 4: Run Python tests
       - name: Run tests
         run: |
-          make test
+          source ~/myenv/bin/activate
+          pytest
