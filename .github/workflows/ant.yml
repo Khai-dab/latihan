@@ -1,4 +1,4 @@
-name: Python CI on Red Hat Runner (No Sudo)
+name: Java 8 and Ant CI Pipeline on Red Hat Runner (No Sudo)
 
 on:
   push:
@@ -10,30 +10,38 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up Python environment (without sudo)
-      - name: Set up Python environment
+      # Step 2: Verify Java 8 is already installed
+      - name: Verify Java 8 Installation
         run: |
-          # Create a virtual environment in the project directory
-          python3 -m venv ~/myenv
+          java -version
+
+      # Step 3: Install Apache Ant (Without sudo)
+      - name: Install Apache Ant
+        run: |
+          # Download Apache Ant (latest stable version)
+          curl -L -o ant.tar.gz https://downloads.apache.org/ant/binaries/apache-ant-1.10.11-bin.tar.gz
           
-          # Activate the virtual environment
-          source ~/myenv/bin/activate
+          # Extract Ant into the user's local directory
+          mkdir -p ~/local/ant
+          tar -xzf ant.tar.gz -C ~/local/ant --strip-components=1
 
-          # Upgrade pip in the virtual environment
-          pip install --upgrade pip
+          # Set Ant environment variables
+          echo "export ANT_HOME=$HOME/local/ant" >> $BASH_ENV
+          echo "export PATH=$ANT_HOME/bin:$PATH" >> $BASH_ENV
+          source $BASH_ENV
 
-      # Step 3: Install Python dependencies in the virtual environment
-      - name: Install Python dependencies
+      # Step 4: Build the project using Ant
+      - name: Build with Ant
         run: |
-          source ~/myenv/bin/activate
-          pip install -r requirements.txt
+          ant clean
+          ant compile
+          ant jar
 
-      # Step 4: Run Python tests
-      - name: Run tests
+      # Step 5: Run tests with Ant
+      - name: Run tests with Ant
         run: |
-          source ~/myenv/bin/activate
-          pytest
+          ant test
